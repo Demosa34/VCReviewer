@@ -1,0 +1,295 @@
+﻿<Window x:Class="VCReviewer.View.EditItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VCReviewer.View"
+        xmlns:viewmodel="clr-namespace:VCReviewer.ViewModel"
+        xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
+        xmlns:model="clr-namespace:VCReviewer.Model"
+        mc:Ignorable="d"
+        
+        Height="700" 
+        Width="700"
+       
+        WindowStartupLocation="CenterScreen">
+
+
+
+    <!--Height="700" 
+        Width="700"
+        ResizeMode="NoResize"
+        Topmost="True"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen">-->
+
+
+
+    <Window.DataContext>
+        <viewmodel:EditItemViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ObjectDataProvider
+            x:Key="DataBase"
+            MethodName="GetInstance"
+            ObjectType="{x:Type model:DataBase}" />
+    </Window.Resources>
+
+
+    <Grid Background="{StaticResource LightBrush}">
+        <ScrollViewer>
+            <StackPanel Name="root" Margin="010">
+                <TextBlock
+                    
+                    HorizontalAlignment="Center"
+                   Text="Редактирование:" 
+                    FontSize="25"
+                    Style="{StaticResource BaseText}"
+                    TextWrapping="Wrap"/>
+
+                <TextBlock
+                    Margin="10"
+                    FontSize="{StaticResource H1}"
+                    Style="{StaticResource BaseText}"
+                    Text="{Binding ItemInfo.Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+                <Grid>
+
+                    <Border CornerRadius="5">
+                        <Border.OpacityMask>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Border
+                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Border}}"
+                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource AncestorType=Border}}"
+                                        Background="Black"
+                                        CornerRadius="{Binding CornerRadius, RelativeSource={RelativeSource AncestorType=Border}}"
+                                        SnapsToDevicePixels="True" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Border.OpacityMask>
+
+                        <StackPanel HorizontalAlignment="Center">
+                            <UniformGrid Background="{StaticResource DarkBrush}" Columns="2">
+                                <TextBlock
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseText}"
+                                    Text="Название: " />
+
+                                <TextBox
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseTextBox}"
+                                    Text="{Binding ItemInfo.Name}"
+                                    TextWrapping="Wrap" />
+                            </UniformGrid>
+
+
+                            <UniformGrid Background="{StaticResource MediumBrush}" Columns="2">
+                                <TextBlock
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseText}"
+                                    Text="Ключевые слова: " />
+
+
+                                <StackPanel Margin="10">
+                                    <ItemsControl ItemsSource="{Binding ItemInfo.KeyWords}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="4*" />
+                                                        <ColumnDefinition Width="1*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <toolkit:AutoCompleteBox
+                                                        Margin="3"
+                                                        BorderThickness="0"
+                                                        FilterMode="Contains"
+                                                        FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"
+                                                        ItemsSource="{Binding Source={StaticResource DataBase}, Path=KeyWords}"
+                                                        Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        TextBlock.TextAlignment="Center">
+                                                        <toolkit:AutoCompleteBox.TextBoxStyle>
+                                                            <Style BasedOn="{StaticResource BaseTextBox}" TargetType="TextBox">
+                                                                <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                                                            </Style>
+                                                        </toolkit:AutoCompleteBox.TextBoxStyle>
+                                                    </toolkit:AutoCompleteBox>
+
+                                                    <Button
+                                                        Grid.Column="1"
+                                                        Margin="3"
+                                                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.DeleteKeyWord}"
+                                                        CommandParameter="{Binding}"
+                                                        Content="Х"
+                                                        Style="{StaticResource BaseButton}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Button
+                                        Margin="3"
+                                        Command="{Binding AddKeyWord}"
+                                        Content="Добавить"
+                                        Style="{StaticResource BaseButton}" />
+                                </StackPanel>
+                            </UniformGrid>
+
+                            <UniformGrid Background="{StaticResource DarkBrush}" Columns="2">
+                                <TextBlock
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseText}"
+                                    Text="Описание: " />
+
+                                <TextBox
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    AcceptsReturn="True"
+                                    AcceptsTab="True"
+                                    Style="{StaticResource BaseTextBox}"
+                                    Text="{Binding ItemInfo.Discription, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </UniformGrid>
+
+                            <UniformGrid Background="{StaticResource MediumBrush}" Columns="2">
+                                <TextBlock
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseText}"
+                                    Text="Категория: " />
+
+                                <TextBox
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseTextBox}"
+                                    Text="{Binding ItemInfo.CategoryName, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </UniformGrid>
+
+
+                            <UniformGrid Background="{StaticResource DarkBrush}" Columns="2">
+                                <TextBlock
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseText}"
+                                    Text="Где искать: " />
+
+                                <TextBox
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    AcceptsReturn="True"
+                                    AcceptsTab="True"
+                                    Style="{StaticResource BaseTextBox}"
+                                    Text="{Binding ItemInfo.GeoPosition, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </UniformGrid>
+
+                            <UniformGrid Background="{StaticResource MediumBrush}" Columns="2">
+                                <TextBlock
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseText}"
+                                    Text="Колличество: " />
+
+                                <TextBox
+                                    Margin="10"
+                                    VerticalAlignment="Center"
+                                    AcceptsReturn="True"
+                                    AcceptsTab="True"
+                                    Style="{StaticResource BaseTextBox}"
+                                    Text="{Binding ItemInfo.Amount, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" 
+                                    InputScope="Number"/>
+                            </UniformGrid>
+
+                            <StackPanel>
+                                <ItemsControl ItemsSource="{Binding ItemInfo.Images}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="5">
+                                                <Image
+                                                    Width="100"
+                                                    Height="100"
+                                                    Source="{Binding FallbackValue='http://place.it/100x100/Mypic'}" />
+
+                                                <Border
+                                                    Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top"
+                                                    Background="#FFFF2020"
+                                                    CornerRadius="3">
+                                                    <Border.InputBindings>
+                                                        <MouseBinding
+                                                            Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext.RemoveImage}"
+                                                            CommandParameter="{Binding}"
+                                                            Gesture="LeftClick" />
+                                                    </Border.InputBindings>
+
+                                                    <TextBlock
+                                                        Margin="1"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Foreground="White"
+                                                        Style="{StaticResource BaseText}"
+                                                        Text="🗙" />
+                                                </Border>
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Button
+                                    Margin="4"
+                                    Command="{Binding AddImage}"
+                                    Content="Добавить картинку"
+                                    Style="{StaticResource BaseButton}" />
+                            </StackPanel>
+
+                            <!--<Button
+                                    Margin="4"
+                                    Command="{Binding AddImage}"
+                                    Content="Добавить картинку"
+                                    Style="{StaticResource BaseButton}" />-->
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
+                <Grid>
+                    <Button
+                    Width="150"
+                    Margin="55"
+                    HorizontalAlignment="Left"
+                    Command="{Binding Save}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                    Content="Сохранить"
+                    Style="{StaticResource BaseButton}" />
+
+                    <Button
+                    Width="150"
+                    Margin="55"
+                    HorizontalAlignment="Right"
+                    Command="{Binding CloseAddItem}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                    Content="Отменить"
+                    Style="{StaticResource BaseButton}" />
+                </Grid>
+              
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
